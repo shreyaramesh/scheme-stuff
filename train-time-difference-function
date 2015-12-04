@@ -1,0 +1,77 @@
+(define (get-train-no train)
+	(cond ((null? train) '())
+	      (else
+		(car train))))
+
+(define (get-arr-dep-timediff ls)                  ;;input is valid list ie create-valid-list
+                                                   
+	(define (get-deph-time train)
+		(car (car (cdr (cdr train)))))
+	(define (get-arrh-time train)
+		(car (car (cdr (cdr (cdr train))))))
+	(define (get-depm-time train)
+		(car (cdr (car (cdr (cdr train))))))
+	(define (get-arrm-time train)
+		(car (cdr (car (cdr (cdr (cdr train)))))))
+	(cond ((> (get-arrm-time ls) (get-depm-time ls))
+				(+ (- (get-arrm-time ls) (get-depm-time ls)) (* 60 (- (get-arrh-time ls) (get-deph-time ls)))))
+		  ((= (get-arrm-time ls) (get-depm-time ls))
+				(* 60 (- (get-arrh-time ls) (get-deph-time ls))))
+		  (else (+ (- 60 (- (get-depm-time ls) (get-arrm-time ls))) (* 60 (- (get-arrh-time ls) (get-deph-time ls) 1))))))
+
+(define (check-valid-d time t-rec l)
+		(if (> (get-deph-time t-rec) (caar l))
+		    1 
+			(if (and (= (get-deph-time t-rec) (caar l)) (>= (get-depm-time t-rec) (cadar l)))
+				1
+				(if (and (= (get-deph-time t-rec) (caadr l)) (< (get-depm-time t-rec) (cdadr l)))
+					1
+					0))))
+		  
+
+(define (check-valid-a-time t-rec l)
+		(if (> (get-arrh-time t-rec) (caar l))
+			1
+			(if (and (= (get-arrh-time t-rec) (caadr l)) (<= (get-arrm-time t-rec) (cdadr l)))
+				1
+				0)))
+
+
+(define (create-valid-train-list l1 l2) 
+
+(define (valid-time train l2)
+		(define (get-deph-time t-rec)
+			(car (car (cdr (cdr t-rec)))))
+		(define (get-arrh-time t-rec)
+			(car (car (cdr (cdr (cdr t-rec))))))
+		(define (get-depm-time t-rec)
+			(car (cdr (car (cdr (cdr t-rec))))))
+		(define (get-arrm-time t-rec)
+			(car (cdr (car (cdr (cdr (cdr t-rec)))))))
+	
+		(cond ((and (= 1 (check-valid-d-time train l2)) (= 1 (check-valid-a-time train l2)))
+				1)
+			  (else 0))) 
+     
+	          (cond ((null? l1)
+			'())
+		  ((= 1 (valid-time (car l1) l2))
+			(cons (car l1) (create-valid-list (cdr l1) l2)))
+                        (else (create-valid-train-list (cdr l1) l2)))) 		  
+			
+(define (check-lowest-duration list)          
+	
+                                   
+	(cond ((null? list) '())
+		  ((null? (cdr list)) 
+		    (car list))
+		  ((< (get-arr-dep-timediff (car list)) (get-arr-dep-timediff(check-lowest-duration (cdr list))))
+			(car list))
+		  (else (check-lowest-duration (cdr list)))))      
+
+(define (get-train-no-min-time l1 l2)       
+	(cond ((null? l2) 
+		    'error)
+		  ((null? l1)
+		    'error)
+		  (else (get-train-no (check-lowest-duration (create-valid-train-list l1 l2))))))		  
