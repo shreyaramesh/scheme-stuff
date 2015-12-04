@@ -1,0 +1,63 @@
+(define (make-prod-record pid manufacturer price)
+        (list pid manufacturer price))
+
+(define (get-pid prod-record)
+        (car prod-record))
+
+(define (get-manufacturer prod-record)
+        (cadr prod-record))
+
+(define (get-price prod-record)
+        (caddr prod-record))
+
+(define (make-dept-record dept-name prod-record)
+        (list dept-name prod-record))
+
+
+(define (get-dept-name rec) 
+        (car rec))
+
+(define (get-prod-record rec)
+        (cadr rec))
+
+(define (make-ecom-db list)
+        list)
+
+(define (get-first ecom-db)
+       (car ecom-db))
+
+(define (get-rest ecom-db)
+        (cdr ecom-db))
+
+(define (get-required-dept-prod-recs ecom-db dept-name)
+        (cond ((null? ecom-db) '())
+              ((eqv? (get-dept-name (get-first ecom-db)) dept-name)
+              (cons (get-first ecom-db) (get-required-dept-prod-recs (get-rest ecom-db) dept-name)))
+              (else (get-required-dept-prod-recs (get-rest ecom-db ) dept-name))))
+        
+
+(define (get-required-prod-recs lst manufacturer)
+        (cond ((null? lst) '())
+	      ((eqv? (get-manufacturer (get-prod-record (get-first lst))) manufacturer)
+              (cons (get-first lst) (get-required-prod-recs (get-rest lst) manufacturer)))
+              (else (get-required-prod-recs (get-rest lst) manufacturer))))
+ 
+
+(define (main ecom-db dept-name manufacturer)
+        (minimum (get-required-prod-recs (get-required-dept-prod-recs ecom-db dept-name) manufacturer ))) 
+
+
+(define (minimum lst)
+  (cond ((null? lst) '())
+   	((null? (get-rest lst)) (get-first lst))
+        ((< (get-price (get-prod-record (get-first lst))) (get-price (get-prod-record (minimum (get-rest lst)))))
+                       (get-first lst))
+        (else (minimum (get-rest lst)))
+)
+)
+      
+   
+
+;;(main '(( a (p1 m1 12)) (b (p2 m1 12)) (a (p3 m1 10))) 'a 'm1)
+      
+       
