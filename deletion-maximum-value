@@ -1,0 +1,24 @@
+( define ( findmax ls)
+    (cond ((null? (cdr ls ))
+            (car ls)
+           )
+              
+          (( > (car ls) (findmax (cdr ls)))
+               (car ls))
+
+               (else (findmax (cdr ls)))
+            )
+     )
+)
+
+
+(define (delete_max ls)
+    (cond (( = (findmax ls) (car ls))
+           (cdr ls))
+
+           (else ( append ( delete_max (cdr ls)) (list (car ls))))
+           )
+    )
+)
+
+
